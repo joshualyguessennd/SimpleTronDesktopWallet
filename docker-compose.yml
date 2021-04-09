@@ -1,0 +1,37 @@
+version: '2'
+
+services: 
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3005:3005
+    volumes: 
+      - .:/usr/src/app
+    links:
+      - database
+    depends_on: 
+      - database
+  database:
+    image: mongo:4.1.8-xenial
+    container_name: db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    volumes:
+      - dbdata:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+  node_modules:
